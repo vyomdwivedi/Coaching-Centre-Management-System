@@ -9,7 +9,9 @@ def attendance_management():
     date = st.date_input("Select Date")
 
     students = fetch(f"""
-        SELECT s.student_id, s.name
+        SELECT 
+            s.student_id, 
+            s.name
         FROM students s
         JOIN enrollments e ON s.student_id = e.student_id
         WHERE e.batch_id = %s
@@ -35,7 +37,11 @@ def attendance_management():
                 ON DUPLICATE KEY UPDATE status = %s
             """, (student_id, batch_id, date, status, status))
         attendance_report = fetch("""
-            SELECT s.student_id, s.name, a.attendance_date, a.status
+            SELECT 
+                s.student_id, 
+                s.name, 
+                a.attendance_date, 
+                a.status
             FROM students s
             JOIN attendance a ON s.student_id = a.student_id
             WHERE a.batch_id = %s AND a.attendance_date = %s

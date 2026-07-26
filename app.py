@@ -49,8 +49,6 @@ else:
             st.session_state.teacher = False
             st.rerun()
 
-
-
 st.html("""
     <style>
         .st-key-logout {

@@ -9,7 +9,11 @@ def fee_management():
     if fee_option == "View Fee Details":
         students = fetch('SELECT student_id, name FROM students;')
         fee_details = fetch(f"""
-            SELECT f.fee_id, f.amount, f.due_date, f.status
+            SELECT 
+                f.fee_id, 
+                f.amount, 
+                f.due_date, 
+                f.status
             FROM fees f
         """)
         status_check = st.selectbox("Select Fee Status", ["Paid", "Unpaid"])
@@ -30,7 +34,11 @@ def fee_management():
         selected_student = st.selectbox("Select Student", student_options)
         student_id = selected_student.split(" - ")[0]
         fee_details = fetch(f"""
-            SELECT f.fee_id, f.amount, f.due_date, f.status
+            SELECT 
+                f.fee_id, 
+                f.amount, 
+                f.due_date, 
+                f.status
             FROM fees f
             WHERE f.student_id = %s
         """, (student_id,))
@@ -42,10 +50,10 @@ def fee_management():
                 WHERE student_id = %s
             """, (student_id,))
         if st.button("Mark Fee as Unpaid"):
-                    execute_query(f"""
-                        UPDATE fees SET status = 'Unpaid'
-                        WHERE student_id = %s
-                    """, (student_id,))
+            execute_query(f"""
+                UPDATE fees SET status = 'Unpaid'
+                WHERE student_id = %s
+            """, (student_id,))
         
     # Add Fee Payment
     elif fee_option == "Add Fee Payment":
@@ -56,7 +64,10 @@ def fee_management():
         amount_paid = st.number_input("Enter Amount Paid", min_value=0.0)
         payment_date = st.date_input("Enter Payment Date")
         if st.button("Add Fee Payment"):
-            execute_query(f"INSERT INTO fee_payments (student_id, amount_paid, payment_date) VALUES (%s, %s, %s)", (student_id, amount_paid, payment_date))
+            execute_query(f"""
+                INSERT INTO fee_payments (student_id, amount_paid, payment_date) 
+                VALUES (%s, %s, %s)
+            """, (student_id, amount_paid, payment_date))
             st.success("Fee payment added successfully.")
 
     # Generate Fee Report
@@ -64,9 +75,11 @@ def fee_management():
         report_type = st.selectbox("Select Report Type", ["All Students", "By Student"])
         if report_type == "All Students":
             fee_reports = fetch("""
-                SELECT s.student_id, s.name,
-                       COALESCE(SUM(f.amount), 0) AS total_fee,
-                       COALESCE(SUM(CASE WHEN f.status = 'Paid' THEN f.amount ELSE 0 END), 0) AS total_paid
+                SELECT 
+                    s.student_id, 
+                    s.name,
+                    COALESCE(SUM(f.amount), 0) AS total_fee,
+                    COALESCE(SUM(CASE WHEN f.status = 'Paid' THEN f.amount ELSE 0 END), 0) AS total_paid
                 FROM students s
                 LEFT JOIN fees f ON s.student_id = f.student_id
                 GROUP BY s.student_id, s.name
@@ -85,9 +98,11 @@ def fee_management():
             selected_student = st.selectbox("Select Student", student_options)
             student_id = selected_student.split(" - ")[0]
             fee_report = fetch(f"""
-                SELECT s.student_id, s.name,
-                       COALESCE(SUM(f.amount), 0) AS total_fee,
-                       COALESCE(SUM(CASE WHEN f.status = 'Paid' THEN f.amount ELSE 0 END), 0) AS total_paid
+                SELECT 
+                    s.student_id, 
+                    s.name,
+                    COALESCE(SUM(f.amount), 0) AS total_fee,
+                    COALESCE(SUM(CASE WHEN f.status = 'Paid' THEN f.amount ELSE 0 END), 0) AS total_paid
                 FROM students s
                 LEFT JOIN fees f ON s.student_id = f.student_id
                 WHERE s.student_id = %s

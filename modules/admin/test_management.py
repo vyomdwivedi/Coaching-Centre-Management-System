@@ -13,11 +13,8 @@ def test_management():
         if not test_name:
             st.error("Please enter a test name.")
             return
-        execute_query(
-            """
+        execute_query("""
             INSERT INTO tests (batch_id, subject, test_name, test_date, max_marks)
             VALUES (%s, %s, %s, %s, %s)
-            """,
-            (batch_id, subject, test_name, date, max_marks)
-        )
+        """,(batch_id, subject, test_name, date, max_marks))
         st.success("Test added.")

@@ -9,18 +9,24 @@ def result_management():
         st.info("No batches found.")
         return
     batch_id = st.selectbox("Select Batch", batch_options)
-    tests = fetch(
-        'SELECT test_id FROM tests WHERE batch_id = %s ORDER BY test_id;',
-        (batch_id,)
-    )
+    tests = fetch("""
+        SELECT test_id FROM tests 
+        WHERE batch_id = %s 
+        ORDER BY test_id;
+    """,(batch_id,))
     test_options = [test['test_id'] for test in tests]
     if not test_options:
         st.info("No tests found for the selected batch.")
         return
     test_id = st.selectbox("Select Test", test_options)
-    date = fetch('SELECT test_date FROM tests WHERE test_id = %s;', (test_id,))[0]['test_date']
+    date = fetch("""
+        SELECT test_date FROM tests 
+        WHERE test_id = %s;
+    """, (test_id,))[0]['test_date']
     students = fetch(f"""
-        SELECT s.student_id, s.name
+        SELECT 
+            s.student_id, 
+            s.name
         FROM students s
         JOIN enrollments e ON s.student_id = e.student_id
         WHERE e.batch_id = %s

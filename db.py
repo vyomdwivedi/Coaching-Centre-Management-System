@@ -1,6 +1,7 @@
 import mysql.connector
 from typing import List, Dict, Any, cast
 
+
 # ==========================================
 # Database Configuration
 # ==========================================
@@ -22,7 +23,6 @@ def get_connection():
 # ==========================================
 # Fetch Rows
 # ==========================================
-
 def fetch(query, params=None) -> List[Dict[str, Any]]:
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
